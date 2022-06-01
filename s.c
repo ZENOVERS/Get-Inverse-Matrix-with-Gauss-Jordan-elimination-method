@@ -3,7 +3,7 @@
 #include <Windows.h>
 #pragma warning(disable:4996)
 
-#define debug_mode_view_matrix
+#define NOT_debug_mode_view_matrix
 //활성화하면 연산 수행마다 (입력받은 행렬)\n\n(역행렬) 형태로 시각적으로 출력
 
 
