@@ -157,7 +157,7 @@ int main()
 	*/
 
 	
-	system("title Gauss-Jordan elimination method - made by https://blog.naver.com/gmail2012");
+	system("title Gauss-Jordan elimination method - made by Ji Hun Hong");
 	int dim; //입력될 차원 수
 	float arr[100][100], inv[100][100]; //각각 입력받을 행렬, 역행렬을 구하고 저장할 행렬
 	scanf("%d", &dim);
@@ -191,6 +191,8 @@ int main()
 	}
 	else
 		printf("inverse matrix is not exist.");
+
+	puts("");
 
 	system("pause"); //콘솔 창 종료되는 현상 방지
 
