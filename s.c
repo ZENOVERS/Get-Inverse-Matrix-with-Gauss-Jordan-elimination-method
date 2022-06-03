@@ -5,7 +5,7 @@
 #include <math.h>
 #pragma warning(disable:4996)
 
-#define NOT_debug_mode_view_matrix
+#define debug_mode_view_matrix
 //활성화하면('NOT_' 제거) 연산 수행마다 (현 연산 단계)\n\n(입력받은 행렬)\n\n(역행렬) 형태로 시각적으로 출력
 
 
@@ -162,7 +162,6 @@ int main()
 
 	puts("\n");
 
-
 	//역행렬이 존재한다면 출력
 	if (get_inverse(arr, inv, dim) == 1)
 	{
@@ -178,7 +177,10 @@ int main()
 		}
 	}
 	else
+	{
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 6);
 		printf("\n\n\ninverse matrix does not exist.");
+	}
 
 	puts("");
 
