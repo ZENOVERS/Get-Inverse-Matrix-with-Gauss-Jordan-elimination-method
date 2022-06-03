@@ -9,12 +9,12 @@
 //활성화하면('NOT_' 제거) 연산 수행마다 (현 연산 단계)\n\n(입력받은 행렬)\n\n(역행렬) 형태로 시각적으로 출력
 
 
-//주대각성분이 0이 아닌 지 확인 - 역행렬의 조건
+//주대각성분이 0이 아닌지 확인
 int does_inverse_exist(double x[][100], int dim)
 {
 	for (int i = 0; i < dim; i++)
 		for (int j = 0; j < dim; j++)
-			if (((i == j) && x[i][j] == 0)) //역행렬 존재 여부(주대각성분 != 0)
+			if (((i == j) && x[i][j] == 0)) //주대각성분에 0이 있다면
 				return 0;
 
 	return 1;
@@ -25,7 +25,7 @@ int is_Diagonal(double x[][100], int dim)
 {
 	for (int i = 0; i < dim; i++)
 		for (int j = 0; j < dim; j++)
-			if ((i != j) && x[i][j] != 0) //대각행렬 조건 (주대각성분 이외 == 0)
+			if ((i != j) && x[i][j] != 0) //대각행렬 조건에 어긋나면 (주대각성분 이외 == 0)
 				return 0;
 
 	return 1;
@@ -34,8 +34,8 @@ int is_Diagonal(double x[][100], int dim)
 //역행렬 계산
 int get_inverse(double x[][100], double des[][100], int dim)
 {
-	double mul = 0.0f;
-	int modified_row = 0; //수정된 행의 색을 변화시키기 위해 수정된 행의 값 저장
+	double mul = 0.0;
+	int modified_row = 0; //수정된 행의 색을 변화시키기 위해 수정된 행의 수 저장
 
 	//대각행렬이 나올 때 까지 반복
 	while (is_Diagonal(x, dim) != 1)
@@ -155,7 +155,7 @@ void make_I(double x[][100], int dim)
 {
 	for (int i = 0; i < dim; i++)
 		for (int j = 0; j < dim; j++)
-			x[i][j] = (i == j) ? 1.0f : 0.0f; //대각선에 1, 나머지에 0 
+			x[i][j] = (i == j) ? 1.0 : 0.0; //대각선에 1, 나머지에 0 
 }
 
 
