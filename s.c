@@ -5,7 +5,7 @@
 #include <math.h>
 #pragma warning(disable:4996)
 
-#define debug_mode_view_matrix
+#define NOT_debug_mode_view_matrix
 //활성화하면('NOT_' 제거) 연산 수행마다 (현 연산 단계)\n\n(입력받은 행렬)\n\n(역행렬) 형태로 시각적으로 출력
 
 
