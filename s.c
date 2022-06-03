@@ -10,14 +10,14 @@
 
 
 //주대각성분이 0이 아닌지 확인
-int does_inverse_exist(double x[][100], int dim)
+int is_Diagonal_zero(double x[][100], int dim)
 {
 	for (int i = 0; i < dim; i++)
 		for (int j = 0; j < dim; j++)
 			if (((i == j) && x[i][j] == 0)) //주대각성분에 0이 있다면
-				return 0;
+				return 1;
 
-	return 1;
+	return 0;
 }
 
 //대각행렬인지 확인
@@ -37,8 +37,7 @@ int get_inverse(double x[][100], double des[][100], int dim)
 	double mul = 0.0;
 	int modified_row = 0; //수정된 행의 색을 변화시키기 위해 수정된 행의 수 저장
 
-	//대각행렬이 나올 때 까지 반복
-	while (is_Diagonal(x, dim) != 1)
+	do
 	{
 		//대각행렬로 만듦
 		for (int i = 0; i < dim; i++)
@@ -95,10 +94,11 @@ int get_inverse(double x[][100], double des[][100], int dim)
 #endif
 			}
 		}
-	}
+	} while ((is_Diagonal(x, dim) != 1) && (is_Diagonal_zero(x, dim) == 0));
+	//대각행렬이 아니고 주대각성분에 0이 없으면 -> 대각행렬이 나올 때 까지 반복
 
 	//위의 연산을 끝낸 상태에서 주대각성분이 0이면 역행렬은 존재하지 않음
-	if (does_inverse_exist(x, dim) == 0)
+	if (is_Diagonal_zero(x, dim) == 1)
 		return 0;
 
 	//주대각성분이 1이 되게 변환 -> 최종적으로 역행렬 계산
