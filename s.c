@@ -190,7 +190,7 @@ int main()
 		}
 	}
 	else
-		printf("inverse matrix is not exist.");
+		printf("inverse matrix does not exist.");
 
 	puts("");
 
