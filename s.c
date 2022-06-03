@@ -160,9 +160,6 @@ int main()
 	//inv배열을 단위행렬로 만듦 - 가우스 요르단 소거법을 사용하기 위해
 	make_I(inv, dim);
 
-	//역행렬 계산
-	get_inverse(arr, inv, dim);
-
 	puts("\n");
 
 
