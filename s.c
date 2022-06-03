@@ -9,17 +9,27 @@
 //활성화하면('NOT_' 제거) 연산 수행마다 (현 연산 단계)\n\n(입력받은 행렬)\n\n(역행렬) 형태로 시각적으로 출력
 
 
-//대각행렬 및 역행렬이 존재하는지 확인
-int is_Diagonal(double x[][100], int dim)
+//주대각성분이 0이 아닌 지 확인 - 역행렬의 조건
+int does_inverse_exist(double x[][100], int dim)
 {
 	for (int i = 0; i < dim; i++)
 		for (int j = 0; j < dim; j++)
-			if (((i == j) && x[i][j] == 0) || ((i != j) && x[i][j] != 0)) //역행렬 존재 여부(주대각성분 != 0) && 대각행렬 조건(주대각성분 이외 == 0)
+			if (((i == j) && x[i][j] == 0)) //역행렬 존재 여부(주대각성분 != 0)
 				return 0;
 
 	return 1;
 }
 
+//대각행렬인지 확인
+int is_Diagonal(double x[][100], int dim)
+{
+	for (int i = 0; i < dim; i++)
+		for (int j = 0; j < dim; j++)
+			if ((i != j) && x[i][j] != 0) //대각행렬 조건 (주대각성분 이외 == 0)
+				return 0;
+
+	return 1;
+}
 
 //역행렬 계산
 int get_inverse(double x[][100], double des[][100], int dim)
@@ -27,64 +37,68 @@ int get_inverse(double x[][100], double des[][100], int dim)
 	double mul = 0.0f;
 	int modified_row = 0; //수정된 행의 색을 변화시키기 위해 수정된 행의 값 저장
 
-	//대각행렬로 만듦
-	for (int i = 0; i < dim; i++)
+	//대각행렬이 나올 때 까지 반복
+	while (is_Diagonal(x, dim) != 1)
 	{
-		for (int j = 0; j < dim; j++) //j - 행렬의 행 수
+		//대각행렬로 만듦
+		for (int i = 0; i < dim; i++)
 		{
-			if (i == j || x[i][i] == 0 || x[j][i] == 0) //분모, 분자가 0인 경우 continue
-				continue;
-
-			for (int k = 0; k < dim; k++) //k - 행렬의 열 수
+			for (int j = 0; j < dim; j++) //j - 행렬의 행 수
 			{
-				modified_row = j;
+				if (i == j || x[i][i] == 0 || x[j][i] == 0) //분모, 분자가 0인 경우 continue
+					continue;
 
-				if (k == 0) //처음 한 번만 실행
-					mul = -x[j][i] / x[i][i];
+				for (int k = 0; k < dim; k++) //k - 행렬의 열 수
+				{
+					modified_row = j;
 
-				x[j][k] += mul * x[i][k];
-				des[j][k] += mul * des[i][k];
+					if (k == 0) //처음 한 번만 실행
+						mul = -x[j][i] / x[i][i];
 
-				//실수 계산의 부동소수점 반올림 오차를 해결하기 위해 너무 작은 값은 0으로 처리
-				if (fabs(x[j][k]) <= FLT_EPSILON)
-					x[j][k] = 0.0f;
+					x[j][k] += mul * x[i][k];
+					des[j][k] += mul * des[i][k];
 
-				if (fabs(des[j][k]) <= FLT_EPSILON)
-					des[j][k] = 0.0f;
-			}
+					//실수 계산의 부동소수점 반올림 오차를 해결하기 위해 너무 작은 값은 0으로 처리
+					if (fabs(x[j][k]) <= FLT_EPSILON)
+						x[j][k] = 0.0f;
+
+					if (fabs(des[j][k]) <= FLT_EPSILON)
+						des[j][k] = 0.0f;
+				}
 
 #ifdef debug_mode_view_matrix
-			puts("\n\n\n\nSt.1 - Making Diagonal Matrix\n\n"); //대각행렬 만들기
+				puts("\n\n\n\nSt.1 - Making Diagonal Matrix\n\n"); //대각행렬 만들기
 
-			for (int i = 0; i < dim; i++)
-			{
-				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (modified_row == i) ? 12 : 10); //일반적 - 연두색(10), 수정된 행 - 주황색(12)
+				for (int i = 0; i < dim; i++)
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (modified_row == i) ? 12 : 10); //일반적 - 연두색(10), 수정된 행 - 주황색(12)
 
-				for (int j = 0; j < dim; j++)
-					printf("%11lg ", x[i][j]);
+					for (int j = 0; j < dim; j++)
+						printf("%11lg ", x[i][j]);
 
-				puts("");
-			}
-
-			puts("");
-
-			for (int i = 0; i < dim; i++)
-			{
-				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (modified_row == i) ? 12 : 10);
-
-				for (int j = 0; j < dim; j++)
-					printf("%11lg ", des[i][j]);
+					puts("");
+				}
 
 				puts("");
-			}
 
-			SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
+				for (int i = 0; i < dim; i++)
+				{
+					SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), (modified_row == i) ? 12 : 10);
+
+					for (int j = 0; j < dim; j++)
+						printf("%11lg ", des[i][j]);
+
+					puts("");
+				}
+
+				SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 10);
 #endif
+			}
 		}
 	}
 
-	//위의 연산을 끝낸 상태에서 대각행렬(주대각성분 != 0)이 아니면 역행렬은 존재하지 않음
-	if (is_Diagonal(x, dim) == 0)
+	//위의 연산을 끝낸 상태에서 주대각성분이 0이면 역행렬은 존재하지 않음
+	if (does_inverse_exist(x, dim) == 0)
 		return 0;
 
 	//주대각성분이 1이 되게 변환 -> 최종적으로 역행렬 계산
