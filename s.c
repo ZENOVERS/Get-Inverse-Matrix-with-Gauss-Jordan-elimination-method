@@ -9,15 +9,15 @@
 //활성화하면('NOT_' 제거) 연산 수행마다 (현 연산 단계)\n\n(입력받은 행렬)\n\n(역행렬) 형태로 시각적으로 출력
 
 
-//주대각성분이 0이 아닌지 확인
+//모든 주대각성분이 0인지 확인
 int is_Diagonal_zero(double x[][100], int dim)
 {
 	for (int i = 0; i < dim; i++)
 		for (int j = 0; j < dim; j++)
-			if (((i == j) && x[i][j] == 0)) //주대각성분에 0이 있다면
-				return 1;
+			if (((i == j) && x[i][j] != 0.0)) //주대각성분에 0이 없다면
+				return 0;
 
-	return 0;
+	return 1;
 }
 
 //대각행렬인지 확인
@@ -25,10 +25,38 @@ int is_Diagonal(double x[][100], int dim)
 {
 	for (int i = 0; i < dim; i++)
 		for (int j = 0; j < dim; j++)
-			if ((i != j) && x[i][j] != 0) //대각행렬 조건에 어긋나면 (주대각성분 이외 == 0)
+			if ((i != j) && x[i][j] != 0.0) //대각행렬 조건에 어긋나면 (주대각성분 이외 == 0)
 				return 0;
 
 	return 1;
+}
+
+//주대각행렬이 모두 0인 경우 계산이 불가능하기에 행 교체
+int swap(double x[][100], double des[][100], int dim)
+{
+	for (int i = 0; i < dim; i++)
+	{
+		for (int j = 1; j < dim; j++)
+		{
+			if (x[i][i] != x[j][i])
+			{
+				for (int k = 0; k < dim; k++)
+				{
+					double temp = x[j][k];
+					x[j][k] = x[i][k];
+					x[i][k] = temp;
+
+					temp = des[j][k];
+					des[j][k] = des[i][k];
+					des[i][k] = temp;
+				}
+
+				return 1;
+			}
+		}
+	}
+
+	return 0;
 }
 
 //역행렬 계산
@@ -39,12 +67,16 @@ int get_inverse(double x[][100], double des[][100], int dim)
 
 	do
 	{
+		if (is_Diagonal_zero(x, dim) == 1) //모든 주대각성분이 0일 때
+			if (swap(x, des, dim) == 0) //행을 교체할 수 없다면
+				return 0; //역행렬 없음
+
 		//대각행렬로 만듦
 		for (int i = 0; i < dim; i++)
 		{
 			for (int j = 0; j < dim; j++) //j - 행렬의 행 수
 			{
-				if (i == j || x[i][i] == 0 || x[j][i] == 0) //분모, 분자가 0인 경우 continue
+				if (i == j || x[i][i] == 0.0 || x[j][i] == 0.0) //분모, 분자가 0인 경우 continue
 					continue;
 
 				for (int k = 0; k < dim; k++) //k - 행렬의 열 수
@@ -58,12 +90,14 @@ int get_inverse(double x[][100], double des[][100], int dim)
 					des[j][k] += mul * des[i][k];
 
 					//실수 계산의 부동소수점 반올림 오차를 해결하기 위해 너무 작은 값은 0으로 처리
-					if (fabs(x[j][k]) <= FLT_EPSILON)
-						x[j][k] = 0.0f;
+					if (fabs(x[j][k]) <= DBL_EPSILON)
+						x[j][k] = 0.0;
 
-					if (fabs(des[j][k]) <= FLT_EPSILON)
-						des[j][k] = 0.0f;
+					if (fabs(des[j][k]) <= DBL_EPSILON)
+						des[j][k] = 0.0;
 				}
+
+
 
 #ifdef debug_mode_view_matrix
 				puts("\n\n\n\nSt.1 - Making Diagonal Matrix\n\n"); //대각행렬 만들기
@@ -94,7 +128,7 @@ int get_inverse(double x[][100], double des[][100], int dim)
 #endif
 			}
 		}
-	} while ((is_Diagonal(x, dim) != 1) && (is_Diagonal_zero(x, dim) == 0));
+	} while ((is_Diagonal(x, dim) == 0));// && (is_Diagonal_zero(x, dim) == 0));
 	//대각행렬이 아니고 주대각성분에 0이 없으면 -> 대각행렬이 나올 때 까지 반복
 
 	//위의 연산을 끝낸 상태에서 주대각성분이 0이면 역행렬은 존재하지 않음
@@ -148,7 +182,6 @@ int get_inverse(double x[][100], double des[][100], int dim)
 
 	return 1;
 }
-
 
 //단위행렬 구현
 void make_I(double x[][100], int dim)
