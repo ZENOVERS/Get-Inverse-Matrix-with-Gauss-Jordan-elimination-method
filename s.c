@@ -10,7 +10,7 @@
 
 
 //모든 주대각성분이 0인지 확인
-int is_Diagonal_zero(double x[][100], int dim)
+int is_Diagonal_all_zero(double x[][100], int dim)
 {
 	for (int i = 0; i < dim; i++)
 		for (int j = 0; j < dim; j++)
@@ -18,6 +18,17 @@ int is_Diagonal_zero(double x[][100], int dim)
 				return 0;
 
 	return 1;
+}
+
+//주대각성분이 0이 하나라도 있는지 확인
+int is_Diagonal_zero(double x[][100], int dim)
+{
+	for (int i = 0; i < dim; i++)
+		for (int j = 0; j < dim; j++)
+			if (((i == j) && x[i][j] == 0.0)) //주대각성분에 0이 없다면
+				return 1;
+
+	return 0;
 }
 
 //대각행렬인지 확인
@@ -67,7 +78,7 @@ int get_inverse(double x[][100], double des[][100], int dim)
 
 	do
 	{
-		if (is_Diagonal_zero(x, dim) == 1) //모든 주대각성분이 0일 때
+		if (is_Diagonal_all_zero(x, dim) == 1) //모든 주대각성분이 0일 때
 			if (swap(x, des, dim) == 0) //행을 교체할 수 없다면
 				return 0; //역행렬 없음
 
@@ -128,10 +139,10 @@ int get_inverse(double x[][100], double des[][100], int dim)
 #endif
 			}
 		}
-	} while ((is_Diagonal(x, dim) == 0));// && (is_Diagonal_zero(x, dim) == 0));
-	//대각행렬이 아니고 주대각성분에 0이 없으면 -> 대각행렬이 나올 때 까지 반복
+	} while ((is_Diagonal(x, dim) == 0));
+	//대각행렬이 나올 때 까지 반복
 
-	//위의 연산을 끝낸 상태에서 주대각성분이 0이면 역행렬은 존재하지 않음
+	//위의 연산을 끝낸 상태에서 주대각성분이 하나라도 0이면 역행렬은 존재하지 않음
 	if (is_Diagonal_zero(x, dim) == 1)
 		return 0;
 
